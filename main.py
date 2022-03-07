@@ -106,7 +106,7 @@ def compare_time(num_sets):
         time = "Time in ms: {}".format(time_multiply(x, y, subquadratic_multiply))
         result.append((
             curr_nums,
-            subquadratic_multiply(x, y),
+            # subquadratic_multiply(x, y),
             time
         ))
     return result

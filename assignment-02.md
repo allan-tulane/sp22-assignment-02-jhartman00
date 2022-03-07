@@ -105,7 +105,7 @@ and push to your github repository.
     - T(n) = T(n-n) + (n-n+1)^c + ... + (n-1)^c + n^c
     - T(n) = T(0) + 1^c + 2^c + 3^c + ... + n^c
     - T(n) = 1^c + 2^c + 3^c + ... + n^c <= n^c + n^c + ... + n^c = n^(c+1)
-    - O(n) = O(n^(c+1))
+    - O(n) = O(n^(c))
 
   
 
