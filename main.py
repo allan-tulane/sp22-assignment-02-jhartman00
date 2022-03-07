@@ -56,6 +56,32 @@ def pad(x, y):
     return x, y
 
 
+def quadratic_multiply(x, y):
+
+    xvec = x.binary_vec
+    yvec = y.binary_vec
+
+    if x.decimal_val <= 1 and y.decimal_val <= 1:
+        return x * y
+
+    xvec, yvec = pad(xvec, yvec)
+
+    xL, xR = split_number(xvec)
+    yL, yR = split_number(yvec)
+
+    left = quadratic_multiply(xL, yL)
+    right = quadratic_multiply(xR, yR)
+    middle_left = quadratic_multiply(xL, yR)
+    middle_right = quadratic_multiply(xR, yL)
+
+    middle_term = BinaryNumber(middle_left.decimal_val + middle_right.decimal_val)
+    middle_term = bit_shift(middle_term, len(xvec)//2)
+    left = bit_shift(left,len(xvec))
+
+    bin_multiplied = BinaryNumber(left.decimal_val + middle_term.decimal_val + right.decimal_val)
+
+    return bin_multiplied
+
 def subquadratic_multiply(x, y):
     xvec = x.binary_vec
     yvec = y.binary_vec
@@ -70,8 +96,9 @@ def subquadratic_multiply(x, y):
 
     left = subquadratic_multiply(xL, yL)
     right = subquadratic_multiply(xR, yR)
-    mid = subquadratic_multiply(xL, yR) + subquadratic_multiply(
-        xR, yL)
+    x = xL + xR
+    y = yL + yR
+    mid = subquadratic_multiply(x, y)-left-right
     mid = bit_shift(mid, len(xvec) // 2)
     left = bit_shift(left, len(xvec))
 
@@ -79,17 +106,13 @@ def subquadratic_multiply(x, y):
 
 
 def test_multiply():
-    print("2x2:")
-    print(subquadratic_multiply(BinaryNumber(2), BinaryNumber(2)))
-    print("4*4:")
-    print(subquadratic_multiply(BinaryNumber(4), BinaryNumber(4)))
-    print("5*9")
-    print(subquadratic_multiply(BinaryNumber(5), BinaryNumber(9)))
+    assert subquadratic_multiply(BinaryNumber(2), BinaryNumber(2)).decimal_val == 4
+    assert subquadratic_multiply(BinaryNumber(4), BinaryNumber(4)).decimal_val == 16
+    assert subquadratic_multiply(BinaryNumber(10), BinaryNumber(9)).decimal_val == 90
 
 
 def time_multiply(x, y, f):
     start = time.time()
-    print("running timer:")
     x = f(x, y)
     return (time.time() - start) * 1000
 
@@ -103,11 +126,12 @@ def compare_time(num_sets):
     result = []
     for x, y in num_sets:
         curr_nums = "X: {} Y: {}".format(x.decimal_val, y.decimal_val)
-        time = "Time in ms: {}".format(time_multiply(x, y, subquadratic_multiply))
+        sub_time = "Time in ms: {}".format(time_multiply(x, y, subquadratic_multiply))
+        quad_time = "Time in ms: {}".format(time_multiply(x, y, quadratic_multiply))
         result.append((
             curr_nums,
-            # subquadratic_multiply(x, y),
-            time
+            sub_time,
+            quad_time
         ))
     return result
 
@@ -115,16 +139,17 @@ def compare_time(num_sets):
 def print_results(results):
     """ done """
     print(tabulate.tabulate(results,
-                            headers=['nums', 'sub quadratic', 'sub quadratic time'],
+                            headers=['nums', 'sub quadratic', 'quadratic'],
                             floatfmt=".10f",
                             tablefmt="github"))
 
 
 if __name__ == "__main__":
+    test_multiply()
     num_sets = [(BinaryNumber(5), BinaryNumber(5)), (BinaryNumber(25), BinaryNumber(25)),
                 (BinaryNumber(125), BinaryNumber(125)), (BinaryNumber(625), BinaryNumber(625)),
                 (BinaryNumber(3125), BinaryNumber(3125)), (BinaryNumber(15625), BinaryNumber(15625)),
                 (BinaryNumber(78125), BinaryNumber(78125)), (BinaryNumber(390625), BinaryNumber(390625)),
                 (BinaryNumber(1953125), BinaryNumber(1953125)),  (BinaryNumber(9765625), BinaryNumber(9765625)),
-                (BinaryNumber(48828125), BinaryNumber(48828125)), (BinaryNumber(244140625), BinaryNumber(244140625))]
+                (BinaryNumber(48828125), BinaryNumber(48828125)), (BinaryNumber(488281251*50), BinaryNumber(488281251*50))]
     print_results(compare_time(num_sets))
