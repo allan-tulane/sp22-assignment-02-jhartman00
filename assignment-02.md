@@ -202,6 +202,7 @@ and push to your github repository.
   variety of inputs to test whether your code scales in the manner
   described by the asymptotic runtime. Please refer to Recitation 3 for some basic implementations, and Eqs (7) and (8) in the slides https://github.com/allan-tulane/cmps2200-slides/blob/main/module-02-recurrences/recurrences-integer-multiplication.ipynb
  
- 
-
-
+     - I compared the sub quadratic function to the quadratic function from recitation three and got a table you can print out if you run the main file.  I was going to add the table here but it does not format right in the rendered markdown
+     - the table clearly shows the subquadratic function increasing in time (in ms) at a slower rate than the quadratic function
+     - I tested the two functions with different powers of 5 as the x and the y values.  At 5^12, the subquadratic algorithm ran in 2.8 ms whereas the quadratic ran in 6.2 (note these numbers may vary slightly but are subquadratic is consistently less than quadratic)
+     - Since the problem states that the sub_quadratic function should run in sub quadratic time and the sub_quadratic functions times are much lower than the quadratic functions times I would say that the code scales in the manner described by the asymptotic run times.
